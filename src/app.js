@@ -27,7 +27,7 @@ app.get('',(req,res)=>{
 app.get('/help',(req,res)=>{
     res.render("help",{
         title:"Weather",
-        msg:"Search a location, to get the temperature in celcius",
+        msg:"Search the location to get a simple weather report using geocode and open-metro api's",
         uname:"Kiran"
     })
 })
