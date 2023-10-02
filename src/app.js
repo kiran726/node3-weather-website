@@ -1,7 +1,8 @@
 const path=require("path")
 const express=require("express")
 const hbs=require("hbs")
-
+const forecast=require("../util/forecast")
+const geocode=require("../util/geocode")
 
 const app=express()
 
@@ -26,15 +27,42 @@ app.get('',(req,res)=>{
 app.get('/help',(req,res)=>{
     res.render("help",{
         title:"Weather",
-        msg:"Some data",
+        msg:"Search a location, to get the temperature in celcius",
         uname:"Kiran"
     })
 })
 app.get('/about',(req,res)=>{
     res.render("about",{
         title:"About Me",
+        msg:"Nothing to say",
         uname:"Kiran"
     })
+})
+
+app.get('/weather',(req,res)=>{
+    if(!req.query.address){
+        return res.send({
+            error:"Wrong address provided, try another"
+        })
+    }
+    const msg=geocode(req.query.address,(error,{latatiude,longitude,location}={})=>{
+        if(error){
+            return res.send({error})
+        }
+
+        forecast(latatiude,longitude,(error,forecastMsg)=>{
+            if(error){
+                return res.send({error})
+            }
+            
+            res.send({
+                forecast:forecastMsg,
+                location,
+                address:req.query.address
+            })
+        })
+    })
+    
 })
 
 app.get('/help/*',(req,res)=>{
